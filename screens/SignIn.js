@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text,StyleSheet } from 'react-native';
-
+//уже есть аккаунт
 export default function SignIn() {
     return (
       <View style={styles.container}>
