@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { useNavigation } from '@react-navigation/native';
 import { ImageBackground,View, Text,StyleSheet,TouchableOpacity, Button,Image, TouchableHighlight } from 'react-native';
 import OrangeBut from '../assets/images/buttonFromMain.svg';
 
@@ -17,7 +17,7 @@ export default function Welcome({navigation}) {
           <Text style={styles.text}>{text.toUpperCase()}</Text>
           <View style={styles.buttonCont}>
           <TouchableOpacity onPress={toSignUp}>
-              <OrangeBut width={305} height={87} />
+              <OrangeBut width={320} height={87} />
             <Text style={styles.buttonContText}>Продолжить</Text>
           </TouchableOpacity>
           </View>

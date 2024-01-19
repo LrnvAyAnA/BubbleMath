@@ -11,7 +11,7 @@ const Stack = createStackNavigator();
 export default function Navigate() {
     return (
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{cardStyle:{backgroundColor: '#3A0480'}}}>
         <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }}/>
          <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }}/>
          <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }}/>

@@ -7,7 +7,8 @@ import { useFonts } from 'expo-font';
 export default function App() {
   const [fontsLoaded] = useFonts({
     'Nunito-Black': require('./assets/fonts/Nunito-Black.ttf'),
-    'Nunito-ExtraBold': require('./assets/fonts/Nunito-ExtraBold.ttf')
+    'Nunito-ExtraBold': require('./assets/fonts/Nunito-ExtraBold.ttf'),
+    'Nunito-Medium': require('./assets/fonts/Nunito-Medium.ttf')
   })
   if(!fontsLoaded){
     return undefined;
