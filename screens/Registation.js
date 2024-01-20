@@ -8,9 +8,9 @@ import Eye_close from '../assets/images/eye-close.svg';
 import Eye_open from '../assets/images/eye-open.svg';
 import { View, Text,StyleSheet,TouchableOpacity, TextInput} from 'react-native';
 
-//уже есть аккаунт
-export default function SignIn() {
-  const other = 'Или войти с помощью'
+//регистрация
+export default function Registation() {
+  const other = 'Или зарегистрироваться\nс помощью'
   //навигация
   const navigation = useNavigation();
   const toBack = ()=>{
@@ -53,8 +53,11 @@ export default function SignIn() {
         <TouchableOpacity onPress={toBack} style={styles.backBut}>
           <Back width={40} height={20}/>
         </TouchableOpacity>
+        <TouchableOpacity>
+          <Text style={styles.skipText}>Пропустить</Text>
+        </TouchableOpacity>
         </View>
-        <Text style={styles.text}>Войти</Text>
+        <Text style={styles.text}>Регистрация</Text>
         <View style={[styles.inputContainer, {borderColor: isFocused === 'input1' ? '#fff' : 'rgba(255, 255, 255, 0.5)'}]} >
         <TextInput style={styles.input} 
                             onFocus={() => handleFocus('input1')} onBlur={handleBlur} placeholder='E-mail' placeholderTextColor={'rgba(255, 255, 255, 0.5)' } 
@@ -82,13 +85,10 @@ export default function SignIn() {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity>
-        <Text style={styles.otherText}>Не помню пароль</Text>
-      </TouchableOpacity>
         <View style={styles.signUpBut}>
           <TouchableOpacity>
               <OrangeBut width={320} height={87} />
-            <Text style={styles.signUpText}>Войти</Text>
+            <Text style={styles.signUpText}>Зарегистрироваться</Text>
           </TouchableOpacity>
         </View>
         <Text style={styles.otherText}>{other}</Text>
@@ -183,7 +183,8 @@ export default function SignIn() {
       fontFamily: 'Nunito-Medium',
       fontSize: 22,
       color: '#fff',
-      paddingVertical: 10,     
+      paddingVertical: 10,
+      
     },
     eye:{
       padding:20,  

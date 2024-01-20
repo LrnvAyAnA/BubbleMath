@@ -12,6 +12,7 @@ export default function SignUp() {
   const toBack = ()=>{
     navigation.goBack();
   };
+
 //список классов
   const [selectedButton, setSelectedButton] = useState(null);
   const handlePress = (buttonIndex) => {
@@ -38,7 +39,7 @@ export default function SignUp() {
           {renderButton(4, '4 класс')}
         </View>
         <View style={styles.chooseBut}>
-          <TouchableOpacity >
+          <TouchableOpacity>
               <OrangeBut width={320} height={87} />
             <Text style={styles.chooseText}>Выбрать</Text>
           </TouchableOpacity>
