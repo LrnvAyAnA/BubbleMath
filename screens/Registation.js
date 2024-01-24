@@ -12,10 +12,13 @@ import { View, Text,StyleSheet,TouchableOpacity, TextInput} from 'react-native';
 export default function Registation() {
   const other = 'Или зарегистрироваться\nс помощью'
   //навигация
-  const navigation = useNavigation();
+  const navig = useNavigation();
   const toBack = ()=>{
-    navigation.goBack();
+    navig.goBack();
   };
+  const toChooseClass=()=>{
+    navig.navigate('SignUp');
+  }
 
   const [isFocused, setIsFocused] = useState(false);
   const handleFocus = (inputName) => {
@@ -53,7 +56,7 @@ export default function Registation() {
         <TouchableOpacity onPress={toBack} style={styles.backBut}>
           <Back width={40} height={20}/>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={toChooseClass}>
           <Text style={styles.skipText}>Пропустить</Text>
         </TouchableOpacity>
         </View>

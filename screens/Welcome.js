@@ -5,8 +5,8 @@ import OrangeBut from '../assets/images/buttonFromMain.svg';
 
 export default function Welcome({navigation}) {
   const text = 'изучай\nматематику\nвесело\nи эффективно!';
-  const toSignUp=()=>{
-    navigation.navigate('SignUp');
+  const toRegistation=()=>{
+    navigation.navigate('Registation');
   }
   const toSignIn=()=>{
     navigation.navigate('SignIn');
@@ -16,7 +16,7 @@ export default function Welcome({navigation}) {
         <View style={styles.container}>
           <Text style={styles.text}>{text.toUpperCase()}</Text>
           <View style={styles.buttonCont}>
-          <TouchableOpacity onPress={toSignUp}>
+          <TouchableOpacity onPress={toRegistation}>
               <OrangeBut width={320} height={87} />
             <Text style={styles.buttonContText}>Продолжить</Text>
           </TouchableOpacity>
