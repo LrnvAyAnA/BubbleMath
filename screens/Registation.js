@@ -7,17 +7,19 @@ import Google_icon from '../assets/images/google-icon.svg';
 import Eye_close from '../assets/images/eye-close.svg';
 import Eye_open from '../assets/images/eye-open.svg';
 import { View, Text,StyleSheet,TouchableOpacity, TextInput} from 'react-native';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { FirebaseAuth } from '../firebase';
 
 //регистрация
 export default function Registation() {
   const other = 'Или зарегистрироваться\nс помощью'
   //навигация
-  const navig = useNavigation();
+  const navigation = useNavigation();
   const toBack = ()=>{
-    navig.goBack();
+    navigation.goBack();
   };
   const toChooseClass=()=>{
-    navig.navigate('SignUp');
+    navigation.navigate('SignUp');
   }
 
   const [isFocused, setIsFocused] = useState(false);
@@ -34,21 +36,35 @@ export default function Registation() {
     setShowPassword(!showPassword);
   };
 
-
-  const [input1, setInput1] = useState('');
-  const [input2, setInput2] = useState('');
-  const handleInputChange = (inputName, text) => {
-    // Обработчик изменения текста в TextInput
-    switch (inputName) {
-      case 'input1':
-        setInput1(text);
-        break;
-      case 'input2':
-        setInput2(text);
-        break;
-      default:
-        break;
-    }};
+const auth = FirebaseAuth;
+  const handleSignUp = async () => {
+    setLoading(true);
+    try {
+      const response = await createUserWithEmailAndPassword(auth,email,password);
+      console.log(response);
+      alert('Check your emails')
+    } catch (error) {
+      console.log(error);
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading,setLoading] = useState(false);
+  // const handleInputChange = (inputName, text) => {
+  //   // Обработчик изменения текста в TextInput
+  //   switch (inputName) {
+  //     case 'input1':
+  //       setInput1(text);
+  //       break;
+  //     case 'password':
+  //       setpassword(text);
+  //       break;
+  //     default:
+  //       break;
+  //   }};
     return (
       <View style={styles.container}>
         <MainBG style={styles.background}/>
@@ -61,22 +77,22 @@ export default function Registation() {
         </TouchableOpacity>
         </View>
         <Text style={styles.text}>Регистрация</Text>
-        <View style={[styles.inputContainer, {borderColor: isFocused === 'input1' ? '#fff' : 'rgba(255, 255, 255, 0.5)'}]} >
+        <View style={[styles.inputContainer, {borderColor: isFocused === 'email' ? '#fff' : 'rgba(255, 255, 255, 0.5)'}]} >
         <TextInput style={styles.input} 
-                            onFocus={() => handleFocus('input1')} onBlur={handleBlur} placeholder='E-mail' placeholderTextColor={'rgba(255, 255, 255, 0.5)' } 
-                            selectionColor={'rgba(255, 255, 255, 0.5)'} value={input1} onChangeText={(text) => handleInputChange('input1', text)}/>
+                            onFocus={() => handleFocus('email')} onBlur={handleBlur} placeholder='E-mail' placeholderTextColor={'rgba(255, 255, 255, 0.5)' } 
+                            selectionColor={'rgba(255, 255, 255, 0.5)'} value={email} onChangeText={(text) => setEmail(text)}/>
         </View>
         <View style={styles.passContainer}>
-        <View style={[styles.inputContainer, { borderColor: isFocused === 'input2' ? '#fff' : 'rgba(255, 255, 255, 0.5)' }]}>
+        <View style={[styles.inputContainer, { borderColor: isFocused === 'password' ? '#fff' : 'rgba(255, 255, 255, 0.5)' }]}>
           <TextInput
             style={styles.input}
-            onFocus={() => handleFocus('input2')}
+            onFocus={() => handleFocus('password')}
             onBlur={handleBlur}
             placeholder="Пароль"
             placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
             selectionColor={'rgba(255, 255, 255, 0.5)'}
-            value={input2}
-            onChangeText={(text) => handleInputChange('input2', text)}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
             secureTextEntry={!showPassword}
           />
           <TouchableOpacity style={styles.eye} onPress={togglePasswordVisibility}>
@@ -89,10 +105,11 @@ export default function Registation() {
         </View>
       </View>
         <View style={styles.signUpBut}>
-          <TouchableOpacity>
-              <OrangeBut width={320} height={87} />
-            <Text style={styles.signUpText}>Зарегистрироваться</Text>
-          </TouchableOpacity>
+        {loading?( <ActivityIndicator size={'large'} color={'#000'}/>):(
+          <><TouchableOpacity onPress={handleSignUp}>
+          <OrangeBut width={320} height={87} />
+        <Text style={styles.signUpText}>Зарегистрироваться</Text>
+      </TouchableOpacity></>)}
         </View>
         <Text style={styles.otherText}>{other}</Text>
         <TouchableOpacity style={styles.googleBut}>

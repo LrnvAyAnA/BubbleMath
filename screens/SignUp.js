@@ -24,8 +24,7 @@ export default function SignUp() {
     </TouchableOpacity>
   );
   
-    return (
-      
+    return (     
       <View style={styles.container}>
         <MainBG style={styles.background}/>
         <TouchableOpacity onPress={toBack} style={styles.backBut}>
