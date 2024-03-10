@@ -1,26 +1,24 @@
 import React,{useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
-import MainBG from '../assets/images/bg.svg';
-import Back from '../assets/images/Back.svg';
-import OrangeBut from '../assets/images/buttonFromMain.svg';
-import Google_icon from '../assets/images/google-icon.svg';
-import Eye_close from '../assets/images/eye-close.svg';
-import Eye_open from '../assets/images/eye-open.svg';
-import { View, Text,StyleSheet,TouchableOpacity, TextInput} from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { FirebaseAuth } from '../firebase';
+import MainBG from '../../assets/images/bg.svg';
+import Back from '../../assets/images/Back.svg';
+import OrangeBut from '../../assets/images/buttonFromMain.svg';
+import Google_icon from '../../assets/images/google-icon.svg';
+import Eye_close from '../../assets/images/eye-close.svg';
+import Eye_open from '../../assets/images/eye-open.svg';
+import { View, Text,StyleSheet,TouchableOpacity, TextInput, ActivityIndicator, KeyboardAvoidingView} from 'react-native';
+import { getIdToken, signInWithEmailAndPassword } from "firebase/auth";
+import { FirebaseAuth } from '../../firebase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-//регистрация
-export default function Registation() {
-  const other = 'Или зарегистрироваться\nс помощью'
+//уже есть аккаунт
+export default function SignIn() {
+  const other = 'Или войти с помощью'
   //навигация
   const navigation = useNavigation();
   const toBack = ()=>{
     navigation.goBack();
   };
-  const toChooseClass=()=>{
-    navigation.navigate('SignUp');
-  }
 
   const [isFocused, setIsFocused] = useState(false);
   const handleFocus = (inputName) => {
@@ -29,20 +27,23 @@ export default function Registation() {
   const handleBlur = () => {
     setIsFocused(null);
   };
-  
   const [showPassword, setShowPassword] = useState(false);
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-const auth = FirebaseAuth;
-  const handleSignUp = async () => {
+  const auth = FirebaseAuth;
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading,setLoading] = useState(false);
+  const handleLogin = async () => {
     setLoading(true);
     try {
-      const response = await createUserWithEmailAndPassword(auth,email,password);
+      const response = await signInWithEmailAndPassword(auth,email,password);
+      const userToken = await getIdToken(response.user);
+      await AsyncStorage.setItem('userToken',userToken);
+      console.log('User token:', userToken);
       console.log(response);
-      alert('Check your emails')
     } catch (error) {
       console.log(error);
       alert(error.message);
@@ -50,17 +51,17 @@ const auth = FirebaseAuth;
       setLoading(false);
     }
   };
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading,setLoading] = useState(false);
+  
+
+
   // const handleInputChange = (inputName, text) => {
   //   // Обработчик изменения текста в TextInput
   //   switch (inputName) {
-  //     case 'input1':
-  //       setInput1(text);
+  //     case 'email':
+  //       setEmail(text);
   //       break;
   //     case 'password':
-  //       setpassword(text);
+  //       setPassword(text);
   //       break;
   //     default:
   //       break;
@@ -69,14 +70,12 @@ const auth = FirebaseAuth;
       <View style={styles.container}>
         <MainBG style={styles.background}/>
         <View style={styles.head}>
-        <TouchableOpacity onPress={toBack} style={styles.backBut}>
+        <TouchableOpacity onPress={()=>navigation.goBack()} style={styles.backBut}>
           <Back width={40} height={20}/>
         </TouchableOpacity>
-        <TouchableOpacity onPress={toChooseClass}>
-          <Text style={styles.skipText}>Пропустить</Text>
-        </TouchableOpacity>
         </View>
-        <Text style={styles.text}>Регистрация</Text>
+        
+        <Text style={styles.text}>Войти</Text>
         <View style={[styles.inputContainer, {borderColor: isFocused === 'email' ? '#fff' : 'rgba(255, 255, 255, 0.5)'}]} >
         <TextInput style={styles.input} 
                             onFocus={() => handleFocus('email')} onBlur={handleBlur} placeholder='E-mail' placeholderTextColor={'rgba(255, 255, 255, 0.5)' } 
@@ -104,11 +103,14 @@ const auth = FirebaseAuth;
           </TouchableOpacity>
         </View>
       </View>
+      <TouchableOpacity>
+        <Text style={styles.otherText}>Не помню пароль</Text>
+      </TouchableOpacity>
         <View style={styles.signUpBut}>
-        {loading?( <ActivityIndicator size={'large'} color={'#000'}/>):(
-          <><TouchableOpacity onPress={handleSignUp}>
+          {loading?( <ActivityIndicator size={'large'} color={'#000'}/>):(
+          <><TouchableOpacity onPress={handleLogin}>
           <OrangeBut width={320} height={87} />
-        <Text style={styles.signUpText}>Зарегистрироваться</Text>
+        <Text style={styles.signUpText}>Войти</Text>
       </TouchableOpacity></>)}
         </View>
         <Text style={styles.otherText}>{other}</Text>
@@ -188,8 +190,8 @@ const auth = FirebaseAuth;
       
     },
     inputContainer: {
-      flexDirection: 'row', // Добавьте направление row
-      alignItems: 'center', // Чтобы иконка глаза была выровнена вертикально
+      flexDirection: 'row',
+      alignItems: 'center',
       borderWidth: 2,
       borderRadius: 20,
       marginBottom: 28,
@@ -203,8 +205,7 @@ const auth = FirebaseAuth;
       fontFamily: 'Nunito-Medium',
       fontSize: 22,
       color: '#fff',
-      paddingVertical: 10,
-      
+      paddingVertical: 10,     
     },
     eye:{
       padding:20,  

@@ -1,28 +1,29 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { ImageBackground,View, Text,StyleSheet,TouchableOpacity, Button,Image, TouchableHighlight } from 'react-native';
-import OrangeBut from '../assets/images/buttonFromMain.svg';
+import OrangeBut from "../../assets/images/buttonFromMain.svg";
 
-export default function Welcome({navigation}) {
+export default function Welcome() {
+  const navigation = useNavigation();
   const text = 'изучай\nматематику\nвесело\nи эффективно!';
-  const toRegistation=()=>{
-    navigation.navigate('Registation');
-  }
-  const toSignIn=()=>{
-    navigation.navigate('SignIn');
-  }
+  // const toSignUp=()=>{
+  //   navigation.navigate('SignUp');
+  // }
+  // const toSignIn=()=>{
+  //   navigation.navigate('SignIn');
+  // }
     return (
-      <ImageBackground source={require('../assets/images/bg.jpg')}style={styles.background}>
+      <ImageBackground source={require('../../assets/images/bg.jpg')}style={styles.background}>
         <View style={styles.container}>
           <Text style={styles.text}>{text.toUpperCase()}</Text>
           <View style={styles.buttonCont}>
-          <TouchableOpacity onPress={toRegistation}>
+          <TouchableOpacity onPress={()=>navigation.navigate('SignUp')}>
               <OrangeBut width={320} height={87} />
             <Text style={styles.buttonContText}>Продолжить</Text>
           </TouchableOpacity>
           </View>
           <View style={styles.buttonNewAcc}>
-            <TouchableOpacity onPress={toSignIn}>
+            <TouchableOpacity onPress={()=>navigation.navigate('SignIn')}>
               <Text style={styles.buttonNewAccText}>Уже есть аккаунт</Text>
             </TouchableOpacity>
           </View>

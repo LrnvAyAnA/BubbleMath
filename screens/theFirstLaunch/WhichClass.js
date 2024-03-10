@@ -2,16 +2,16 @@ import React, {useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, TouchableOpacity,StyleSheet,ImageBackground } from 'react-native';
 //продолжить
-import OrangeBut from '../assets/images/buttonFromMain.svg';
-import MainBG from '../assets/images/bg.svg';
-import Back from '../assets/images/Back.svg';
+import OrangeBut from '../../assets/images/buttonFromMain.svg';
+import MainBG from '../../assets/images/bg.svg';
+import Back from '../../assets/images/Back.svg';
 
-export default function SignUp() {
+export default function WhichClass() {
 
   const navigation = useNavigation();
-  const toBack = ()=>{
-    navigation.goBack();
-  };
+  // const toBack = ()=>{
+  //   navigation.goBack();
+  // };
 
 //список классов
   const [selectedButton, setSelectedButton] = useState(null);
@@ -27,7 +27,7 @@ export default function SignUp() {
     return (     
       <View style={styles.container}>
         <MainBG style={styles.background}/>
-        <TouchableOpacity onPress={toBack} style={styles.backBut}>
+        <TouchableOpacity onPress={()=>navigation.goBack()} style={styles.backBut}>
           <Back width={40} height={20}/>
         </TouchableOpacity>
         <Text style={styles.text}>В каком ты классе?</Text>        
