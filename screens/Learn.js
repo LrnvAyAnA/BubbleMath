@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, View,StyleSheet,TouchableOpacity,FlatList,TouchableWithoutFeedback,Modal, Dimensions} from 'react-native';
 import Home from "../assets/images/HomeIcon.svg"
 import ListIcon from "../assets/images/listClass.svg"
+import SearchIcon from "../assets/images/search.svg"
 import Sep from "../assets/images/Sep.svg"
 import { useNavigation } from '@react-navigation/native'
 import Lesson from '../components/Lesson';
@@ -15,7 +16,6 @@ export default function Learn(){
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [classPath, setClassPath] = useState('c1');
-  // const navigation = useNavigation();
   const selectItem = (item) => {
     if(item.key=='1'){
       setClassPath('c1');
@@ -64,14 +64,15 @@ export default function Learn(){
         <View style={styles.background}>
             <View style={styles.topPanel}>
                 <TouchableOpacity style={styles.dropDown} onPress={()=>setModalVisible(!modalVisible)}>
-                    <View style={styles.containerClass}>
                     <ListIcon/>
-                    <Text style={styles.textTouchableOpacity}>{selectedItem ? selectedItem.label : '1 класс'}</Text>
-                    </View>
                 </TouchableOpacity>
-                <View style={styles.infoPanelLesson}>
-                  <Text style={styles.infoPanelText}>Здесь инф</Text>
+                <View style={styles.textTopPanel}> 
+                    <Text style={styles.textNumberSection}>1 раздел</Text>
+                    <Text style={styles.textSection}>Название раздела</Text>
                 </View>
+                <TouchableOpacity style={styles.searchBut}>
+                  <SearchIcon/>
+                </TouchableOpacity>
             </View>
             <View style={{flex:1}}>
             <FlatList
@@ -81,6 +82,9 @@ export default function Learn(){
             contentContainerStyle={styles.flatListContainer}
             ListHeaderComponent={headerComponent}
             />            
+            </View>
+            <View>
+              <Lesson number={'10'}/>
             </View>
             {/* <View style={{marginTop:400,justifyContent:'center',alignItems:'center',height:200, width:200}}>
               <TouchableOpacity style={{height:100, width:200,backgroundColor:'#000'}} onPress={myFirestore}>
@@ -119,35 +123,52 @@ export default function Learn(){
                       }
       const styles = StyleSheet.create({
         centeringSpace:{
-          height: 250, 
+          height: 150,
         },
-        infoPanelText:{
-          color:'white',
-          fontFamily:'Nunito-ExtraBold',
-          fontSize:22,
-        },
-        infoPanelLesson:{
-          backgroundColor:'#866AF6',
-          borderRadius:30,
-          width:'100%',
-          height:'55%',
-          marginTop:22,
+        textTopPanel:{
+          flex:1,
           alignItems:'center',
-          justifyContent:'center',
         },
         topPanel:{
+          flexDirection:'row',
+          alignItems:'flex-end',
           position:'absolute',
           backgroundColor:'#6A54E9',
           width:'100%',
-          height:'25%',
+          height:'16%',
           zIndex:2,
+          paddingHorizontal:'3%',
+          paddingBottom:'5%',
+        },
+        textNumberSection:{
+          fontFamily:'Nunito-ExtraBold',
+          fontSize: 20,
+          color:'rgba(255,255,255,0.5)'
+        },
+        textSection:{
+          fontFamily:'Nunito-ExtraBold',
+          fontSize: 22,
+          color:'#fff',
+        },
+        dropDown:{
+          // backgroundColor:'#000',
+          alignItems:'flex-end',
+          justifyContent:'center',
+          width:34,
+          height:32,
+          },
+        searchBut:{
+          // backgroundColor:'#000',
+          alignItems:'flex-end',
+          justifyContent:'flex-end',
+          width:34,
+          height:32,
         },
         modalView: {
           flex:1,
           borderRadius: 20,
         },
         onBackdrop:{
-
             flex:1,
             backgroundColor:'rgba(24, 24, 37,0.9)',
         },
@@ -178,29 +199,6 @@ export default function Learn(){
         justifyContent:'center',
         marginBottom:1,        
         marginTop:1,        
-        },
-        containerClass:{
-        flexDirection:'row'
-        },
-        dropDown:{
-        justifyContent: 'center',
-        backgroundColor:'#fff',
-        marginTop:50,
-        marginLeft:15,
-        paddingLeft:22,
-        paddingRight:45,
-        borderRadius:100,
-        alignSelf:'flex-start',
-        width:219,
-        height:58,
-        },
-        textTouchableOpacity:{
-        fontSize:20,
-        textAlign:'right',
-        flex:1,
-        marginTop:2,
-        color:'#6A54E9',
-        fontFamily:'Nunito-Black',
         },
         background:{
         backgroundColor:'#F5F3FD',

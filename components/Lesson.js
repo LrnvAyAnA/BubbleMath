@@ -1,14 +1,14 @@
 import React from "react";
-import { View,StyleSheet,TouchableHighlight } from "react-native";
+import { View,StyleSheet,TouchableHighlight,Text } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 
-const Lesson=()=>{
+const Lesson=({number})=>{
   return(
     <TouchableHighlight >
       <View style={styles.circle}>
       <LinearGradient colors={['#866AF6', '#6F57FF']}
       style={styles.littleCircle}>
-
+        <Text style={styles.text}>{number}</Text>
       </LinearGradient>
       </View>
     </TouchableHighlight>
@@ -16,6 +16,12 @@ const Lesson=()=>{
 };
 
 const styles = StyleSheet.create({
+  text:{
+    color:'#fff',
+    fontSize:54,
+    fontFamily:'Nunito-ExtraBold',
+    textAlign:'center',
+  },
   circle:{
     width:134,
     height:134,
@@ -28,6 +34,8 @@ const styles = StyleSheet.create({
   littleCircle:{
     width:112,
     height:112,
+    justifyContent:'center',
+    alignItems:'center',
     borderRadius:70,
   },
 })
