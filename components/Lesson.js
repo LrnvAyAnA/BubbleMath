@@ -8,7 +8,9 @@ const Lesson=({number})=>{
       <View style={styles.circle}>
       <LinearGradient colors={['#866AF6', '#6F57FF']}
       style={styles.littleCircle}>
-        <Text style={styles.text}>{number}</Text>
+        <View>
+          <Text style={styles.text}>{number}</Text>
+        </View>
       </LinearGradient>
       </View>
     </TouchableHighlight>

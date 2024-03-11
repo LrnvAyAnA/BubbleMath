@@ -13,6 +13,7 @@ import { Button } from 'react-native-elements';
 export default function Learn(){  
   const db = getFirestore();
   const [dataLesson, setDataLesson] = useState([]);
+  const [dataSection, setDataSection] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [classPath, setClassPath] = useState('c1');
@@ -30,35 +31,100 @@ export default function Learn(){
     setModalVisible(false);
     console.log(item.key);    
   };
-
-    const data = [
+  const data = [
       { key: '1', label: '1 класс' },
       { key: '2', label: '2 класс' },
       { key: '3', label: '3 класс' },
     ];
-    const renderItem = ({ item }) => (
-      <CurLesson
-        lessonNumber={item.lessonNumber}
-        title={item.title}
+    const renderItem = ({ item }) => {
+      console.log(item);
+      if (item.type === 'section') {
+        return <SectionComponent  />;
+      } else if (item.type === 'lesson') {
+        return <LessonComponent lessonNumber={item.lessonNumber} title={item.title} />;
+      }
+      return null;
+    };
+
+    const LessonComponent = ({ lessonNumber, title }) => {
+      return (
+        <CurLesson
+        lessonNumber={lessonNumber}
+        title={title}
         // status={item.status}
       />
-    );
+      );
+    };
+    const SectionComponent = ({ item }) => {
+      if (!item) {
+        return null;
+      }
+      return (
+        <View>
+          <Text>{item.numberSection} раздел</Text>
+          <Text>{item.name}</Text>
+        </View>
+      );
+    };
     useEffect(() => {
-      console.log('useEffect is called');
       const fetchData = async () => {
         try {
-          const ref = collection(db, 'Class', classPath, 'Section', 's1', 'Lesson');
-          const snapshot = await getDocs(ref);
-          const newData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          setDataLesson(newData);
-          console.log("data",newData);
+          const sectionsRef = collection(db, 'Class', classPath, 'Section');
+          const sectionsSnapshot = await getDocs(sectionsRef);
+          const sections = sectionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const allData = [];
+    
+          for (const section of sections) {
+            // Добавляем строку "section" перед уроками каждого раздела
+            allData.push({ id: section.id, type: 'section', name: section.sectionName, numberSection: section.numberSection });
+    
+            const lessonRef = collection(db, 'Class', classPath, 'Section', section.id, 'Lesson');
+            const lessonSnapshot = await getDocs(lessonRef);
+            const lessonData = lessonSnapshot.docs.map(doc => ({ id: doc.id, type: 'lesson', ...doc.data() }));
+            lessonData.sort((a, b) => a.lessonNumber.localeCompare(b.lessonNumber));
+            allData.push(...lessonData);
+          }
+    
+          //console.log("All data:", allData);
+          setDataLesson(allData);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       };
-  
+    
       fetchData();
     }, [classPath]);
+    // useEffect(()=>{
+    //   const fetchData = async() => {
+    //     try {
+    //       //получение всех разделов класса
+    //       const ref = collection(db,'Class',classPath,'Section');
+    //       const snapshot = await getDocs(ref);
+    //       const sectionNames = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    //       console.log("Section names:", sectionNames);
+    //       //получение всех уроков
+
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    //   };
+    //   fetchData();
+    // },[]);
+    // useEffect(() => {
+    //   const fetchData = async () => {
+    //     try {
+          
+    //       const ref = collection(db, 'Class', classPath, 'Section', 's1', 'Lesson');
+    //       const snapshot = await getDocs(ref);
+    //       const newData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    //       setDataLesson(newData);
+    //     } catch (error) {
+    //       console.error('Error fetching data:', error);
+    //     }
+    //   };
+  
+    //   fetchData();
+    // }, [classPath]);
     const headerComponent = () => <View style={styles.centeringSpace} />;
     return(
         <View style={styles.background}>
@@ -83,13 +149,9 @@ export default function Learn(){
             ListHeaderComponent={headerComponent}
             />            
             </View>
-            <View>
+            {/* <View>
               <Lesson number={'10'}/>
-            </View>
-            {/* <View style={{marginTop:400,justifyContent:'center',alignItems:'center',height:200, width:200}}>
-              <TouchableOpacity style={{height:100, width:200,backgroundColor:'#000'}} onPress={myFirestore}>
-                  <Text>Press down</Text>
-    </TouchableOpacity></View>*/}
+            </View> */}
             <View>
               <Modal
               animationType="fade"
