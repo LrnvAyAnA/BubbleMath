@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View,StyleSheet,TouchableOpacity,FlatList,TouchableWithoutFeedback,Modal, Dimensions} from 'react-native';
+import { Text, View,StyleSheet,TouchableOpacity,FlatList,TouchableWithoutFeedback,Modal} from 'react-native';
 import Home from "../assets/images/HomeIcon.svg"
 import ListIcon from "../assets/images/listClass.svg"
 import SearchIcon from "../assets/images/search.svg"
@@ -9,6 +9,13 @@ import Lesson from '../components/Lesson';
 import CurLesson from '../components/CurLesson';
 import { collection, doc, setDoc, getDoc ,getFirestore, getDocs} from 'firebase/firestore';
 import { Button } from 'react-native-elements';
+import 'react-native-gesture-handler';
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
 
 export default function Learn(){  
   const db = getFirestore();
@@ -36,16 +43,7 @@ export default function Learn(){
       { key: '2', label: '2 класс' },
       { key: '3', label: '3 класс' },
     ];
-    const renderItem = ({ item }) => {
-      console.log(item);
-      if (item.type === 'section') {
-        return <SectionComponent  />;
-      } else if (item.type === 'lesson') {
-        return <LessonComponent lessonNumber={item.lessonNumber} title={item.title} />;
-      }
-      return null;
-    };
-
+    
     const LessonComponent = ({ lessonNumber, title }) => {
       return (
         <CurLesson
@@ -55,17 +53,26 @@ export default function Learn(){
       />
       );
     };
-    const SectionComponent = ({ item }) => {
-      if (!item) {
-        return null;
-      }
+    const SectionComponent = ({ numberSection, name }) => {
       return (
-        <View>
-          <Text>{item.numberSection} раздел</Text>
-          <Text>{item.name}</Text>
-        </View>
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionTextOne}>{numberSection} раздел</Text>
+        <Text style={styles.sectionTextTwo}>{name}</Text>
+      </View>
       );
     };
+    const renderItem = ({ item,index }) => {
+      if(index===0 && item.type==='section'){
+        setDataSection(item);
+      }
+      else if (item.type === 'section') {
+        return <SectionComponent name={item.name} numberSection={item.numberSection}/>;
+      } else if (item.type === 'lesson') {
+        return <LessonComponent lessonNumber={item.lessonNumber} title={item.title} />;
+      }
+      return null;
+    };
+   
     useEffect(() => {
       const fetchData = async () => {
         try {
@@ -133,8 +140,8 @@ export default function Learn(){
                     <ListIcon/>
                 </TouchableOpacity>
                 <View style={styles.textTopPanel}> 
-                    <Text style={styles.textNumberSection}>1 раздел</Text>
-                    <Text style={styles.textSection}>Название раздела</Text>
+                    <Text style={styles.textNumberSection}>{dataSection.numberSection} раздел</Text>
+                    <Text style={styles.textSection}>{dataSection.name}</Text>
                 </View>
                 <TouchableOpacity style={styles.searchBut}>
                   <SearchIcon/>
@@ -181,9 +188,26 @@ export default function Learn(){
               </Modal>
             </View>
       </View>
-      )
-                      }
+      )}
       const styles = StyleSheet.create({
+        sectionContainer:{
+          height:80,
+          backgroundColor:'#6A54E9',
+          //borderRadius:15,
+          justifyContent:'center',
+          alignItems:'center',
+          marginBottom:50,
+        },
+        sectionTextOne:{
+          fontFamily:'Nunito-ExtraBold',
+          fontSize: 20,
+          color:'rgba(255,255,255,0.5)'
+        },
+        sectionTextTwo:{
+          fontFamily:'Nunito-ExtraBold',
+          fontSize: 22,
+          color:'#fff',
+        },
         centeringSpace:{
           height: 150,
         },
@@ -198,7 +222,7 @@ export default function Learn(){
           backgroundColor:'#6A54E9',
           width:'100%',
           height:'16%',
-          zIndex:2,
+          zIndex:1,
           paddingHorizontal:'3%',
           paddingBottom:'5%',
         },
