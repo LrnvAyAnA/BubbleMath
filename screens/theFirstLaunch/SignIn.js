@@ -42,6 +42,7 @@ export default function SignIn() {
       const response = await signInWithEmailAndPassword(auth,email,password);
       const userToken = await getIdToken(response.user);
       await AsyncStorage.setItem('userToken',userToken);
+      await AsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
       console.log('User token:', userToken);
       console.log(response);
     } catch (error) {
@@ -77,9 +78,17 @@ export default function SignIn() {
         
         <Text style={styles.text}>Войти</Text>
         <View style={[styles.inputContainer, {borderColor: isFocused === 'email' ? '#fff' : 'rgba(255, 255, 255, 0.5)'}]} >
-        <TextInput style={styles.input} 
-                            onFocus={() => handleFocus('email')} onBlur={handleBlur} placeholder='E-mail' placeholderTextColor={'rgba(255, 255, 255, 0.5)' } 
-                            selectionColor={'rgba(255, 255, 255, 0.5)'} value={email} onChangeText={(text) => setEmail(text)}/>
+        <TextInput 
+        style={styles.input} 
+        onFocus={() => handleFocus('email')} 
+        onBlur={handleBlur} 
+        placeholder='E-mail' 
+        placeholderTextColor={'rgba(255, 255, 255, 0.5)'} 
+        selectionColor={'rgba(255, 255, 255, 0.5)'} 
+        value={email} 
+        onChangeText={(text) => setEmail(text.trim())}
+         />
+
         </View>
         <View style={styles.passContainer}>
         <View style={[styles.inputContainer, { borderColor: isFocused === 'password' ? '#fff' : 'rgba(255, 255, 255, 0.5)' }]}>

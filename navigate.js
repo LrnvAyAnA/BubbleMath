@@ -19,18 +19,11 @@ import { FirebaseAuth } from "./firebase";
 import Theory from "./screens/Theory";
 import Profile from "./screens/Profile";
 import { View, StyleSheet, } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createStackNavigator();
 const BottomTabs = createBottomTabNavigator();
-export const useHide = (initialHide) => {
-  const [hide, setHide] = useState(initialHide);
 
-  const toggleDropdown = () => {
-    setHide(!hide);
-  };
-
-  return { hide, toggleDropdown };
-};
 
 function InsideLayout() {
   return (
@@ -65,24 +58,9 @@ function InsideLayout() {
     </BottomTabs.Navigator>   
   );
 }
-
-export default function Navigate() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(FirebaseAuth, (user) => {
-      setUser(user);
-      console.log('user', user);
-    });
-    return () => unsubscribe();
-  }, []);
-
+function OutsideLayout(){
   return (
-    <NavigationContainer>
-      {user ? (
-        <InsideLayout/>
-      ) : (
-        <Stack.Navigator
+    <Stack.Navigator
           screenOptions={{
             cardStyle: { flex: 1, backgroundColor: '#3A0480' },
             cardStyleInterpolator: ({ current: { progress } }) => ({
@@ -100,7 +78,22 @@ export default function Navigate() {
           <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
           <Stack.Screen name="ChangeClass" component={ChangeClass} options={{ headerShown: false }} />
         </Stack.Navigator>
-      )}
+  );
+}
+export default function Navigate() {
+  const [isLoggedIn,setIsLoggedIn] = useState(false);
+  async function getData(){
+    const data = await AsyncStorage.getItem('isLoggedIn');
+    setIsLoggedIn(data);
+    console.log(isLoggedIn);
+  }
+  useEffect(()=>{
+    getData();
+  },[]);
+  return (
+    <NavigationContainer>
+      {isLoggedIn ? ( <InsideLayout/> ) : ( <OutsideLayout/> )}
     </NavigationContainer>
   );
 }
+ 

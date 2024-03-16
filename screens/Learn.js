@@ -79,10 +79,8 @@ export default function Learn(){
           const sectionsRef = collection(db, 'Class', classPath, 'Section');
           const sectionsSnapshot = await getDocs(sectionsRef);
           const sections = sectionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          const allData = [];
-    
+          const allData = [];   
           for (const section of sections) {
-            // Добавляем строку "section" перед уроками каждого раздела
             allData.push({ id: section.id, type: 'section', name: section.sectionName, numberSection: section.numberSection });
     
             const lessonRef = collection(db, 'Class', classPath, 'Section', section.id, 'Lesson');
@@ -91,8 +89,6 @@ export default function Learn(){
             lessonData.sort((a, b) => a.lessonNumber.localeCompare(b.lessonNumber));
             allData.push(...lessonData);
           }
-    
-          //console.log("All data:", allData);
           setDataLesson(allData);
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -101,37 +97,7 @@ export default function Learn(){
     
       fetchData();
     }, [classPath]);
-    // useEffect(()=>{
-    //   const fetchData = async() => {
-    //     try {
-    //       //получение всех разделов класса
-    //       const ref = collection(db,'Class',classPath,'Section');
-    //       const snapshot = await getDocs(ref);
-    //       const sectionNames = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    //       console.log("Section names:", sectionNames);
-    //       //получение всех уроков
 
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   };
-    //   fetchData();
-    // },[]);
-    // useEffect(() => {
-    //   const fetchData = async () => {
-    //     try {
-          
-    //       const ref = collection(db, 'Class', classPath, 'Section', 's1', 'Lesson');
-    //       const snapshot = await getDocs(ref);
-    //       const newData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    //       setDataLesson(newData);
-    //     } catch (error) {
-    //       console.error('Error fetching data:', error);
-    //     }
-    //   };
-  
-    //   fetchData();
-    // }, [classPath]);
     const headerComponent = () => <View style={styles.centeringSpace} />;
     return(
         <View style={styles.background}>
@@ -156,9 +122,7 @@ export default function Learn(){
             ListHeaderComponent={headerComponent}
             />            
             </View>
-            {/* <View>
-              <Lesson number={'10'}/>
-            </View> */}
+
             <View>
               <Modal
               animationType="fade"
