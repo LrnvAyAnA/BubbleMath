@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useContext, useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import MainBG from '../../assets/images/bg.svg';
 import Back from '../../assets/images/Back.svg';
@@ -9,7 +9,8 @@ import Eye_open from '../../assets/images/eye-open.svg';
 import { View, Text,StyleSheet,TouchableOpacity, TextInput, ActivityIndicator, KeyboardAvoidingView} from 'react-native';
 import { getIdToken, signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseAuth } from '../../firebase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext, useAuth } from '../../context/AuthContext';
 
 //уже есть аккаунт
 export default function SignIn() {
@@ -36,15 +37,13 @@ export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading,setLoading] = useState(false);
+  const { login } = useAuth();
   const handleLogin = async () => {
     setLoading(true);
     try {
       const response = await signInWithEmailAndPassword(auth,email,password);
       const userToken = await getIdToken(response.user);
-      await AsyncStorage.setItem('userToken',userToken);
-      await AsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
-      console.log('User token:', userToken);
-      console.log(response);
+      login(userToken);
     } catch (error) {
       console.log(error);
       alert(error.message);
@@ -52,21 +51,7 @@ export default function SignIn() {
       setLoading(false);
     }
   };
-  
 
-
-  // const handleInputChange = (inputName, text) => {
-  //   // Обработчик изменения текста в TextInput
-  //   switch (inputName) {
-  //     case 'email':
-  //       setEmail(text);
-  //       break;
-  //     case 'password':
-  //       setPassword(text);
-  //       break;
-  //     default:
-  //       break;
-  //   }};
     return (
       <View style={styles.container}>
         <MainBG style={styles.background}/>

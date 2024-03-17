@@ -9,9 +9,6 @@ import Back from '../../assets/images/Back.svg';
 export default function WhichClass() {
 
   const navigation = useNavigation();
-  // const toBack = ()=>{
-  //   navigation.goBack();
-  // };
 
 //список классов
   const [selectedButton, setSelectedButton] = useState(null);

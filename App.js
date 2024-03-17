@@ -3,6 +3,7 @@ import { Button, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import Navigate from './navigate';
 import { useFonts } from 'expo-font';
+import { AuthContextProvider } from './context/AuthContext';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -14,7 +15,9 @@ export default function App() {
     return undefined;
   }
   return (
+    <AuthContextProvider>
     <Navigate/>
+    </AuthContextProvider>
   );
 }
 

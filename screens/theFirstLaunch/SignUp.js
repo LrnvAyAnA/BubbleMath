@@ -6,22 +6,16 @@ import OrangeBut from '../../assets/images/buttonFromMain.svg';
 import Google_icon from '../../assets/images/google-icon.svg';
 import Eye_close from '../../assets/images/eye-close.svg';
 import Eye_open from '../../assets/images/eye-open.svg';
-import { View, Text,StyleSheet,TouchableOpacity, TextInput} from 'react-native';
+import { View, Text,StyleSheet,TouchableOpacity, TextInput, ActivityIndicator} from 'react-native';
 import { createUserWithEmailAndPassword, getIdToken } from 'firebase/auth';
 import { FirebaseAuth } from '../../firebase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 //регистрация
 export default function SignUp() {
   const other = 'Или зарегистрироваться\nс помощью'
   //навигация
   const navigation = useNavigation();
-  // const toBack = ()=>{
-  //   navigation.goBack();
-  // };
-  // const toChooseClass=()=>{
-  //   navigation.navigate('WhichClass');
-  // }
 
   const [isFocused, setIsFocused] = useState(false);
   const handleFocus = (inputName) => {
@@ -44,7 +38,7 @@ const auth = FirebaseAuth;
       const response = await createUserWithEmailAndPassword(auth,email,password);
       const userToken = await getIdToken(response.user);
       console.log(response);
-      await AsyncStorage.setItem('userToken',userToken);
+      await ReactNativeAsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
     } catch (error) {
       console.log(error);
       alert(error.message);
@@ -71,7 +65,7 @@ const auth = FirebaseAuth;
         <View style={[styles.inputContainer, {borderColor: isFocused === 'email' ? '#fff' : 'rgba(255, 255, 255, 0.5)'}]} >
         <TextInput style={styles.input} 
                             onFocus={() => handleFocus('email')} onBlur={handleBlur} placeholder='E-mail' placeholderTextColor={'rgba(255, 255, 255, 0.5)' } 
-                            selectionColor={'rgba(255, 255, 255, 0.5)'} value={email} onChangeText={(text) => setEmail(text)}/>
+                            selectionColor={'rgba(255, 255, 255, 0.5)'} value={email} onChangeText={(text) => setEmail(text.trim())}/>
         </View>
         <View style={styles.passContainer}>
         <View style={[styles.inputContainer, { borderColor: isFocused === 'password' ? '#fff' : 'rgba(255, 255, 255, 0.5)' }]}>

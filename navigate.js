@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Svg, { Path } from 'react-native-svg';
 import Welcome from './screens/theFirstLaunch/Welcome';
 import WhichClass from './screens/theFirstLaunch/WhichClass';
@@ -19,8 +19,9 @@ import { FirebaseAuth } from "./firebase";
 import Theory from "./screens/Theory";
 import Profile from "./screens/Profile";
 import { View, StyleSheet, } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthContextProvider, useAuth } from "./context/AuthContext";
+import { AuthContext } from "./context/AuthContext"; 
 const Stack = createStackNavigator();
 const BottomTabs = createBottomTabNavigator();
 
@@ -58,9 +59,31 @@ function InsideLayout() {
     </BottomTabs.Navigator>   
   );
 }
-function OutsideLayout(){
+export default function Navigate() {
+  const { userToken } = useAuth();
+  // const [userToken, setUserToken] = useState(null);
+  // useEffect(() => {
+  //   const checkUserLogin = async () => {
+  //     const token = await ReactNativeAsyncStorage.getItem('userToken');  
+  //     setUserToken(token);    
+  //     console.log(userToken);
+  //     // Подписка на изменения аутентификации
+  //     const unsubscribe = onAuthStateChanged(FirebaseAuth, (user) => {
+  //       if (user) {
+  //         setUserToken(token);
+  //       } else {
+  //         setUserToken(null);
+  //       }
+  //     });
+
+  //     return () => unsubscribe(); // Отмена подписки при размонтировании компонента
+  //   };
+
+  //   checkUserLogin();
+  // }, []);
   return (
-    <Stack.Navigator
+    <NavigationContainer>
+      {userToken  ? ( <InsideLayout/> ) : ( <Stack.Navigator
           screenOptions={{
             cardStyle: { flex: 1, backgroundColor: '#3A0480' },
             cardStyleInterpolator: ({ current: { progress } }) => ({
@@ -77,22 +100,7 @@ function OutsideLayout(){
           <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
           <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
           <Stack.Screen name="ChangeClass" component={ChangeClass} options={{ headerShown: false }} />
-        </Stack.Navigator>
-  );
-}
-export default function Navigate() {
-  const [isLoggedIn,setIsLoggedIn] = useState(false);
-  async function getData(){
-    const data = await AsyncStorage.getItem('isLoggedIn');
-    setIsLoggedIn(data);
-    console.log(isLoggedIn);
-  }
-  useEffect(()=>{
-    getData();
-  },[]);
-  return (
-    <NavigationContainer>
-      {isLoggedIn ? ( <InsideLayout/> ) : ( <OutsideLayout/> )}
+        </Stack.Navigator> )}
     </NavigationContainer>
   );
 }
