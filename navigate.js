@@ -7,8 +7,12 @@ import SignIn from './screens/theFirstLaunch/SignIn';
 import ChangeClass from './screens/windows/ChangeClass';
 import Learn from "./screens/Learn";
 import HomeIcon from "./assets/images/HomeIcon.svg"
-import TheoryIcon from "./assets/images/TheoryIcon.svg"
-import ProfileIcon from "./assets/images/ProfileIcon.svg"
+import HomeIconOff from './assets/images/HomeIconOff'
+import TheoryIcon from './assets/images/TheoryIcon'
+import TheoryIconOff from "./assets/images/TheoryIconOff.svg"
+import ProfileIcon from './assets/images/ProfileIcon'
+import ProfileIconOff from "./assets/images/ProfileIconOff.svg"
+import { LessonScreen } from "./screens/LessonScreen";
 
 
 import { createStackNavigator, TransitionPresets } from "@react-navigation/stack";
@@ -22,6 +26,7 @@ import { View, StyleSheet, } from "react-native";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthContextProvider, useAuth } from "./context/AuthContext";
 import { AuthContext } from "./context/AuthContext"; 
+
 const Stack = createStackNavigator();
 const BottomTabs = createBottomTabNavigator();
 
@@ -29,7 +34,7 @@ const BottomTabs = createBottomTabNavigator();
 function InsideLayout() {
   return (
        <BottomTabs.Navigator 
-    screenOptions={{
+    screenOptions={{ tabBarHideOnKeyboard:true,
       tabBarShowLabel: false,
       tabBarStyle: {backgroundColor: '#fff', height:70,display:'flex'},
     }}>
@@ -38,8 +43,7 @@ function InsideLayout() {
         options={{
         headerShown: false,
         tabBarIcon: ({ focused }) => (
-        <View>
-          <HomeIcon height={28} width={28} fill={focused? "#6A54E9":"rgba(106, 84, 233, 0.2)"}/>
+        <View>{focused? <HomeIcon height={28} width={28} fill={"#6A54E9"}/>:<HomeIconOff/>}
         </View>
     ), }}/>
 
@@ -47,13 +51,13 @@ function InsideLayout() {
         headerShown: false,
         tabBarIcon: ({ focused }) => (
           <View>
-            <TheoryIcon height={34} width={34} fill={focused? "#6A54E9":"white"}/>
+            {focused? <TheoryIcon/>:<TheoryIconOff height={34} width={34} fill={"#6A54E9"}/>}
           </View>
       ), }}/>
       <BottomTabs.Screen name="Profile" component={Profile} options={{ headerShown: false,
       tabBarIcon: ({ focused }) => (
         <View>
-          <ProfileIcon height={34} width={34} fill={focused? "white":"rgba(255, 255, 255, 0.5)"}/>
+          {focused? <ProfileIcon/>:<ProfileIconOff height={34} width={34} fill={"white"}/>}
         </View>
     ), }}/>
     </BottomTabs.Navigator>   
@@ -61,26 +65,6 @@ function InsideLayout() {
 }
 export default function Navigate() {
   const { userToken } = useAuth();
-  // const [userToken, setUserToken] = useState(null);
-  // useEffect(() => {
-  //   const checkUserLogin = async () => {
-  //     const token = await ReactNativeAsyncStorage.getItem('userToken');  
-  //     setUserToken(token);    
-  //     console.log(userToken);
-  //     // Подписка на изменения аутентификации
-  //     const unsubscribe = onAuthStateChanged(FirebaseAuth, (user) => {
-  //       if (user) {
-  //         setUserToken(token);
-  //       } else {
-  //         setUserToken(null);
-  //       }
-  //     });
-
-  //     return () => unsubscribe(); // Отмена подписки при размонтировании компонента
-  //   };
-
-  //   checkUserLogin();
-  // }, []);
   return (
     <NavigationContainer>
       {userToken  ? ( <InsideLayout/> ) : ( <Stack.Navigator
@@ -100,6 +84,7 @@ export default function Navigate() {
           <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
           <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
           <Stack.Screen name="ChangeClass" component={ChangeClass} options={{ headerShown: false }} />
+          <Stack.Screen name="Lesson" component={LessonScreen} options={{ headerShown: false }} />
         </Stack.Navigator> )}
     </NavigationContainer>
   );

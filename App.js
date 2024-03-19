@@ -1,11 +1,12 @@
-import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, View} from 'react-native';
+
+import { Button, StyleSheet, Text, View,StatusBar} from 'react-native';
 import React from 'react';
 import Navigate from './navigate';
 import { useFonts } from 'expo-font';
 import { AuthContextProvider } from './context/AuthContext';
 
 export default function App() {
+  //StatusBar.setTranslucent(true);
   const [fontsLoaded] = useFonts({
     'Nunito-Black': require('./assets/fonts/Nunito-Black.ttf'),
     'Nunito-ExtraBold': require('./assets/fonts/Nunito-ExtraBold.ttf'),
@@ -16,7 +17,7 @@ export default function App() {
   }
   return (
     <AuthContextProvider>
-    <Navigate/>
+      <Navigate/>
     </AuthContextProvider>
   );
 }
