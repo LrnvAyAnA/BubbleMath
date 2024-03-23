@@ -63,9 +63,9 @@ const styles = StyleSheet.create({
   searchBut:{
     // backgroundColor:'#000',
     position:'absolute',
-    right:0,
-    alignItems:'flex-end',
-    justifyContent:'flex-end',
+    //right:0,
+    alignItems:'center',
+    justifyContent:'center',
     width:34,
     height:32,
   },

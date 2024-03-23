@@ -6,6 +6,7 @@ import SignUp from './screens/theFirstLaunch/SignUp';
 import SignIn from './screens/theFirstLaunch/SignIn';
 import ChangeClass from './screens/windows/ChangeClass';
 import Learn from "./screens/Learn";
+import TheoryTemp from "./templates/Theory";
 import HomeIcon from "./assets/images/HomeIcon.svg"
 import HomeIconOff from './assets/images/HomeIconOff'
 import TheoryIcon from './assets/images/TheoryIcon'
@@ -29,14 +30,24 @@ import { AuthContext } from "./context/AuthContext";
 
 const Stack = createStackNavigator();
 const BottomTabs = createBottomTabNavigator();
-
+const LessonRoute = createStackNavigator();
+export const TABBAR_HEIGHT = 70;
 
 function InsideLayout() {
+  return (
+      <Stack.Navigator>
+        <Stack.Screen name='Lesson' component={LessonMain} options={{ headerShown: false }}/>
+        <Stack.Screen name='TheoryTemp' component={TheoryTemp} options={{ headerShown: false,  }}/>
+      </Stack.Navigator>
+  );
+}
+
+function LessonMain() {
   return (
        <BottomTabs.Navigator 
     screenOptions={{ tabBarHideOnKeyboard:true,
       tabBarShowLabel: false,
-      tabBarStyle: {backgroundColor: '#fff', height:70,display:'flex'},
+      tabBarStyle: {backgroundColor: '#fff', height:TABBAR_HEIGHT,display:'flex'},
     }}>
       <BottomTabs.Screen name="Learn" component={Learn}
       
@@ -84,7 +95,6 @@ export default function Navigate() {
           <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
           <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
           <Stack.Screen name="ChangeClass" component={ChangeClass} options={{ headerShown: false }} />
-          <Stack.Screen name="Lesson" component={LessonScreen} options={{ headerShown: false }} />
         </Stack.Navigator> )}
     </NavigationContainer>
   );

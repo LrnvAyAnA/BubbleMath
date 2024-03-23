@@ -1,9 +1,9 @@
 import React from "react";
 import { View,Text,StyleSheet,TouchableOpacity } from "react-native";
 
-const CurLesson=({ lessonNumber, title })=>{//  status
+const CurLesson=({ lessonNumber, title, onpress })=>{//  status
   return(
-    <TouchableOpacity style={styles.circle}>
+    <TouchableOpacity style={styles.circle} onPress={onpress}>
     <View style={styles.littleCircle}>
       <Text style={styles.numles}>{lessonNumber} урок</Text>
       <Text style={styles.title}>{title}</Text>

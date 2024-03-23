@@ -1,10 +1,54 @@
-import React from "react";
-import { View,StyleSheet,TouchableHighlight,Text } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View,StyleSheet,TouchableHighlight,Text, Dimensions, TouchableOpacity } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { Extrapolation, interpolate, useAnimatedStyle } from "react-native-reanimated";
 
-const Lesson=({number})=>{
+const ITEMLESSON_SIZE = 134;
+const WINDOW_HEIGHT = Dimensions.get('window').height;
+const Lesson=({number,contentOffset, index, title, onPress})=>{
+  const [isCentered, setIsCentered] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!isCentered && contentOffset.value >= (index - 1) * 251 && contentOffset.value <= (index + 1) * 251) {
+        setIsCentered(true);
+        console.log('from:',(index - 1) * 251,'to:', (index + 1) * 251)
+      } else if (isCentered && (contentOffset.value < (index - 1) * 251 || contentOffset.value > (index + 1) * 251)) {
+        setIsCentered(false);
+      }
+    };
+
+    handleScroll();
+
+    return () => {
+      // Очищаем обработчик при размонтировании компонента
+    };
+  }, [contentOffset.value, index, isCentered]);
+  const rStyle = useAnimatedStyle(()=>{
+    const inputRange = [
+      (index - 1) * 251,
+      index * 251,
+      (index + 1) * 251,
+    ];
+
+    const translateYOutputRange = [
+      1, // масштаб 90% от исходного
+      1,   // исходный масштаб
+      1, // масштаб 90% от исходного
+    ];
+
+    const translateX = interpolate(
+      contentOffset.value,
+      inputRange,
+      translateYOutputRange,
+    );
+
+  return { 
+    transform: [{ scale:translateX }],
+  };
+  })
   return(
-    <TouchableHighlight >
+    <Animated.View style={[styles.container,rStyle]}>
+      {!isCentered? <TouchableHighlight >
       <View style={styles.circle}>
       <LinearGradient colors={['#866AF6', '#6F57FF']}
       style={styles.littleCircle}>
@@ -14,10 +58,63 @@ const Lesson=({number})=>{
       </LinearGradient>
       </View>
     </TouchableHighlight>
+    : <TouchableOpacity style={styles.circleCur} onPress={onPress}>
+    <View style={styles.littleCircleCur}>
+      <Text style={styles.numles}>{number} урок</Text>
+      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.status}>Начать</Text>
+    </View>
+  </TouchableOpacity>}
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
+
+  littleCircleCur:{
+    alignSelf:'center',
+    backgroundColor:'white',
+    width:270,
+    height:270,
+    borderRadius:200,
+    paddingLeft: 29,
+    paddingRight:29,
+    alignItems:'center',
+    justifyContent:'center',
+  },
+  circleCur:{
+    width:310,
+    height:310,
+    backgroundColor:'#EDEBFC',
+    borderRadius:200,
+    justifyContent:'center',   
+    alignSelf:'center',
+    marginBottom:24,
+  },
+  numles:{
+    color:'#6A54E9',
+    fontFamily:'Nunito-Medium',
+    fontSize:22,
+  },
+  title:{
+    textAlign:'center',
+    color:'#6A54E9',
+    fontFamily:'Nunito-ExtraBold',
+    fontSize:30,
+  },
+  status:{   
+    marginTop:20,
+    color:'#3D2A73',
+    fontFamily:'Nunito-ExtraBold',
+    fontSize:34,
+  },
+  container:
+  {
+    alignItems:'center',
+    // backgroundColor:'red',
+    justifyContent:'center',
+    marginBottom:24,
+  },
   text:{
     color:'#fff',
     fontSize:54,
@@ -25,8 +122,8 @@ const styles = StyleSheet.create({
     textAlign:'center',
   },
   circle:{
-    width:134,
-    height:134,
+    width:ITEMLESSON_SIZE,
+    height:ITEMLESSON_SIZE,
     backgroundColor:'#6A54E9',
     borderRadius:70,
     alignSelf:'center',
