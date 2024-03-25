@@ -19,7 +19,7 @@ export default function Welcome() {
           <View style={styles.buttonCont}>
           <TouchableOpacity onPress={()=>navigation.navigate('SignUp')}>
               <OrangeBut width={320} height={87} />
-            <Text style={styles.buttonContText}>Продолжить</Text>
+            <Text style={styles.buttonContText}>Зарегистрироваться</Text>
           </TouchableOpacity>
           </View>
           <View style={styles.buttonNewAcc}>

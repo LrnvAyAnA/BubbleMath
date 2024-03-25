@@ -13,9 +13,6 @@ import TheoryIcon from './assets/images/TheoryIcon'
 import TheoryIconOff from "./assets/images/TheoryIconOff.svg"
 import ProfileIcon from './assets/images/ProfileIcon'
 import ProfileIconOff from "./assets/images/ProfileIconOff.svg"
-import { LessonScreen } from "./screens/LessonScreen";
-
-
 import { createStackNavigator, TransitionPresets } from "@react-navigation/stack";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -27,17 +24,23 @@ import { View, StyleSheet, } from "react-native";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthContextProvider, useAuth } from "./context/AuthContext";
 import { AuthContext } from "./context/AuthContext"; 
+import { ClassProvider } from "./context/ClassContext";
+import { TABBAR_HEIGHT } from "./constants";
+import AllTheory from "./templates/AllTheory";
+import Practice from "./templates/Practice";
 
 const Stack = createStackNavigator();
 const BottomTabs = createBottomTabNavigator();
 const LessonRoute = createStackNavigator();
-export const TABBAR_HEIGHT = 70;
+
 
 function InsideLayout() {
   return (
       <Stack.Navigator>
         <Stack.Screen name='Lesson' component={LessonMain} options={{ headerShown: false }}/>
-        <Stack.Screen name='TheoryTemp' component={TheoryTemp} options={{ headerShown: false,  }}/>
+        <Stack.Screen name='TheoryTemp' component={TheoryTemp} options={{ headerShown: false }}/>
+        <Stack.Screen name='PracticeTemp' component={Practice} options={{ headerShown: false }}/>
+        <Stack.Screen name='AllTheoryTemp' component={AllTheory} options={{headerShown:false}}/>
       </Stack.Navigator>
   );
 }
@@ -78,7 +81,11 @@ export default function Navigate() {
   const { userToken } = useAuth();
   return (
     <NavigationContainer>
-      {userToken  ? ( <InsideLayout/> ) : ( <Stack.Navigator
+      {userToken  ? ( 
+        <ClassProvider>
+          <InsideLayout/>
+        </ClassProvider>
+       ) : ( <Stack.Navigator
           screenOptions={{
             cardStyle: { flex: 1, backgroundColor: '#3A0480' },
             cardStyleInterpolator: ({ current: { progress } }) => ({

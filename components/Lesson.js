@@ -9,12 +9,13 @@ const Lesson=({number,contentOffset, index, title, onPress})=>{
   const [isCentered, setIsCentered] = useState(false);
   useEffect(() => {
     const handleScroll = () => {
-      if (!isCentered && contentOffset.value >= (index - 1) * 251 && contentOffset.value <= (index + 1) * 251) {
-        setIsCentered(true);
-        console.log('from:',(index - 1) * 251,'to:', (index + 1) * 251)
-      } else if (isCentered && (contentOffset.value < (index - 1) * 251 || contentOffset.value > (index + 1) * 251)) {
-        setIsCentered(false);
-      }
+      // if (!isCentered && contentOffset.value >= (index - 1) * 251 && contentOffset.value <= (index + 1) * 251) {
+      //   setIsCentered(true);
+      //   console.log('from:',(index - 1) * 251,'to:', (index + 1) * 251)
+      // } else if (isCentered && (contentOffset.value < (index - 1) * 251 || contentOffset.value > (index + 1) * 251)) {
+      //   setIsCentered(false);
+      // }
+      console.log(index);
     };
 
     handleScroll();
@@ -22,33 +23,33 @@ const Lesson=({number,contentOffset, index, title, onPress})=>{
     return () => {
       // Очищаем обработчик при размонтировании компонента
     };
-  }, [contentOffset.value, index, isCentered]);
-  const rStyle = useAnimatedStyle(()=>{
-    const inputRange = [
-      (index - 1) * 251,
-      index * 251,
-      (index + 1) * 251,
-    ];
+  }, [contentOffset.value]);
+  // const rStyle = useAnimatedStyle(()=>{
+  //   const inputRange = [
+  //     (index - 1) * 251,
+  //     index * 251,
+  //     (index + 1) * 251,
+  //   ];
 
-    const translateYOutputRange = [
-      1, // масштаб 90% от исходного
-      1,   // исходный масштаб
-      1, // масштаб 90% от исходного
-    ];
+  //   const translateYOutputRange = [
+  //    0.8, // масштаб 90% от исходного
+  //     1,   // исходный масштаб
+  //    0.8, // масштаб 90% от исходного
+  //   ];
 
-    const translateX = interpolate(
-      contentOffset.value,
-      inputRange,
-      translateYOutputRange,
-    );
+  //   const translateX = interpolate(
+  //     contentOffset.value,
+  //     inputRange,
+  //     translateYOutputRange,
+  //   );
 
-  return { 
-    transform: [{ scale:translateX }],
-  };
-  })
+  // return { 
+  //   transform: [{ scale:translateX }],
+  // };
+  // })
   return(
-    <Animated.View style={[styles.container,rStyle]}>
-      {!isCentered? <TouchableHighlight >
+    <Animated.View style={styles.container}>
+      <TouchableHighlight onPress={onPress}>
       <View style={styles.circle}>
       <LinearGradient colors={['#866AF6', '#6F57FF']}
       style={styles.littleCircle}>
@@ -58,13 +59,7 @@ const Lesson=({number,contentOffset, index, title, onPress})=>{
       </LinearGradient>
       </View>
     </TouchableHighlight>
-    : <TouchableOpacity style={styles.circleCur} onPress={onPress}>
-    <View style={styles.littleCircleCur}>
-      <Text style={styles.numles}>{number} урок</Text>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.status}>Начать</Text>
-    </View>
-  </TouchableOpacity>}
+    
     </Animated.View>
   );
 };

@@ -1,4 +1,4 @@
 {
-    "editor.cursorBlinking": "expand",
-    "editor.formatOnSave": true
+  "editor.cursorBlinking": "expand",
+  "editor.formatOnSave": true
 }

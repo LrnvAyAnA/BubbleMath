@@ -1,59 +1,106 @@
 import React, { useEffect, useState } from 'react';
 import CloseIcon from '../assets/images/closeIcon'
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image } from 'react-native';
-import ButContinue from '../assets/images/ButtonContinue'
-import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-const statusBar = StatusBar.currentHeight;
-import { FirebaseApp } from '../firebase';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import ButContinue from '../assets/images/ButtonContinue';
+import { SvgUri } from 'react-native-svg';
+import ProgressBar from '../components/ProgressBar';
+import {Error, statusBarH} from '../constants'
+import { getFromLesson } from '../firebaseQueries';
+
+
+
 const Theory = ({route}) => {
-  const storage = getStorage(FirebaseApp);
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-  const { theoryData } = route.params;
+  const { theoryData, item , classPath} = route.params;
   const [currentPage, setCurrentPage] = useState(1);
-  const [imageURL, setImageURL] = useState(null);
-  const curData = theoryData.find(item => item.numberPage == currentPage);
+  const [lastPage,setLastPage] = useState(false);
+  const curData = theoryData.find(item => item.numberPage == String(currentPage));
+  const [error, catchError] = useState(null);
 
-  // useEffect(() => {
-  //   if (curData && curData.image) {
-  //     const fileRef = ref(storage, curData.image);
-  //     getDownloadURL(fileRef)
-  //       .then(url => setImageURL(url))
-  //       .catch(error => console.error('Error getting download URL:', error));
-  //   }
-  // }, [currentPage, theoryData, storage]);
-
+  const Close = () => {
+    setLoading(false);
+    setLastPage(false);
+    setCurrentPage(1);
+    navigation.goBack();
+  };
+  const closeError = () =>{
+    catchError(null);
+  };
   const goToNextPage = () => {
+    setLoading(false);
+    if(currentPage+1==theoryData.length){
+      setLastPage(true);
+    }
     setCurrentPage(prevPage => prevPage + 1); 
-    navigation.navigate('TheoryTemp', { theoryData, numberPage: currentPage + 1 });
+    navigation.navigate('TheoryTemp', { theoryData, numberPage: currentPage + 1, item, classPath });
+  };
+  const goToPractice = async () =>{    
+    try {
+      const practiceData = await getFromLesson({classPath:classPath,lesson:item,type:'Practice'})
+      if(practiceData.length>0){
+        catchError(false);
+        navigation.navigate('PracticeTemp', {practiceData, item,classPath});        
+      }
+      else {
+        catchError('Извините, пока не сделали =(');
+      }
+    } catch (error) {
+      console.error('Error getting theory data:', error);
+    }
   };
   return (
     <View style={styles.page}>
-      <TouchableOpacity style={styles.closeBut} onPress={()=>navigation.goBack()}>
+      <TouchableOpacity style={styles.closeBut} onPress={Close}>
         <CloseIcon/>
       </TouchableOpacity>
         <Text style={styles.headerText}>ТЕОРИЯ</Text>
+        <View style={styles.progressBar}>
+          <ProgressBar curProgress={currentPage} num={theoryData.length-1}/>
+        </View>
         <View style={styles.contentContainer}>
+
         <View style={styles.content}>
           <Text style={styles.textContent}>{curData.text}</Text>
-        </View>
+        </View>   
         <View style={styles.imageContainer}>
-        <Image source={{ uri: "https://firebasestorage.googleapis.com/v0/b/bubblemath-9dff8.appspot.com/o/1img.jpg?alt=media&token=18ad8744-43af-4c34-bd7c-4a5609321e7c" }} style={{width:358, height:358}}/>
-        </View>
-        
+          <SvgUri
+          uri={curData.image}
+          onLoad={() => setLoading(true)}
+          />
+        </View>  
         </View>
         <View style={styles.butContainer}>
-        <TouchableOpacity style={styles.butContinue} onPress={goToNextPage}>
+        {lastPage?
+        <TouchableOpacity style={styles.butContinue} onPress={goToPractice}>
+          <Text style={styles.textBut}>К практике</Text>
+        <ButContinue width={320} height={87}/>
+      </TouchableOpacity>
+         :<TouchableOpacity style={styles.butContinue} onPress={goToNextPage}>
           <Text style={styles.textBut}>Продолжить</Text>
           <ButContinue width={320} height={87}/>
-        </TouchableOpacity>
+        </TouchableOpacity>}
         </View>
+        {error && <Error error={error} onClose={closeError}/>}
     </View>
+
   );
 };
 const styles = StyleSheet.create({
+  // skeleton:{
+  //   flex:1,
+  //   backgroundColor:'gray'
+  // },
+  progressBar:{
+    width:'100%',
+    height:30,
+    top:50,
+    justifyContent:'center',
+    alignItems:'center',
+  },
   page:{
-    top:statusBar,
+    top:statusBarH,
     flex:1,
     backgroundColor:'#fff',
   },
@@ -103,18 +150,18 @@ const styles = StyleSheet.create({
   },
   contentContainer:{
     flexDirection:'column',
-    top: 128,
+    top: 80,
     flex:1,
     marginBottom:350,
   },
   content:{
     marginHorizontal:17,
-    backgroundColor:'red',
-    alignSelf: 'flex-start', 
+    alignSelf: 'flex-start',
+    marginBottom:20,
   },
   textContent:{
     fontSize:24,
-    fontFamily:'Nunito-Medium',
+    fontFamily:'Nunito-Bold',
     textAlign:'center',
   },
   imageContainer:{
@@ -122,6 +169,10 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     width:'100%',
     flex:1,
+  },
+  modalView: {
+    flex:1,
+    borderRadius: 20,
   },
 })
 export default Theory;

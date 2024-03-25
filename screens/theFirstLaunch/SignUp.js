@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useContext, useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import MainBG from '../../assets/images/bg.svg';
 import Back from '../../assets/images/Back.svg';
@@ -8,11 +8,14 @@ import Eye_close from '../../assets/images/eye-close.svg';
 import Eye_open from '../../assets/images/eye-open.svg';
 import { View, Text,StyleSheet,TouchableOpacity, TextInput, ActivityIndicator} from 'react-native';
 import { createUserWithEmailAndPassword, getIdToken } from 'firebase/auth';
-import { FirebaseAuth } from '../../firebase';
+import { FirebaseAuth, FirestoreDB } from '../../firebase';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { doc, setDoc } from "firebase/firestore";
+import { AuthContext } from '../../context/AuthContext';
 
 //регистрация
 export default function SignUp() {
+  const {login} = useContext(AuthContext);
   const other = 'Или зарегистрироваться\nс помощью'
   //навигация
   const navigation = useNavigation();
@@ -30,15 +33,33 @@ export default function SignUp() {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
+  const createUserDocument = async (uid) => {
+    try {
+      // Создание ссылки на документ пользователя с использованием его UID
+      const userDocRef = doc(FirestoreDB, "User", uid);
+      
+      // Данные о пользователе (в данном случае - пустой объект)
+      const userData = {};
+  
+      // Установка документа пользователя в Firestore
+      await setDoc(userDocRef, userData);
+  
+      console.log("Документ пользователя успешно создан в Firestore");
+    } catch (error) {
+      console.error("Ошибка при создании документа пользователя:", error);
+    }
+  };
 const auth = FirebaseAuth;
   const handleSignUp = async () => {
     setLoading(true);
     try {
       const response = await createUserWithEmailAndPassword(auth,email,password);
+      const uid = response.user.uid;
       const userToken = await getIdToken(response.user);
-      console.log(response);
+      // console.log(response);
       await ReactNativeAsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
+      createUserDocument(uid);
+      login(userToken);
     } catch (error) {
       console.log(error);
       alert(error.message);
@@ -46,6 +67,7 @@ const auth = FirebaseAuth;
       setLoading(false);
     }
   };
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading,setLoading] = useState(false);
@@ -57,9 +79,9 @@ const auth = FirebaseAuth;
         <TouchableOpacity onPress={()=>navigation.goBack()} style={styles.backBut}>
           <Back width={40} height={20}/>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=>navigation.navigate('WhichClass')}>
+        {/* <TouchableOpacity onPress={()=>navigation.navigate('WhichClass')}>
           <Text style={styles.skipText}>Пропустить</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         </View>
         <Text style={styles.text}>Регистрация</Text>
         <View style={[styles.inputContainer, {borderColor: isFocused === 'email' ? '#fff' : 'rgba(255, 255, 255, 0.5)'}]} >

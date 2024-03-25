@@ -1,41 +1,44 @@
 import React, { useState } from "react";
 import { View,StyleSheet,TouchableOpacity,Text, TextInput } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import SearchIconOpen from '../assets/images/SearchOpen';
 import SearchIcon from "../assets/images/search.svg"
 
-const SearchComponent=({onSubmit, setFoundIndex})=>{
+const SearchComponent=({widthBar, onSearch })=>{
   const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchChange = (text) => {
+    setSearchQuery(text);
+    onSearch(text);
+  };
   const animation = useSharedValue(0);
+  const [value,setValue] = useState(0);
+
   const animatedStyle = useAnimatedStyle(()=>{
     return {
-      width:animation.value==1?withTiming(250,{duration:500}):withTiming(0,{duration:500})
+      width:animation.value==1
+      ? withTiming(widthBar,{duration:500})
+      : withTiming(0,{duration:500})
     }
   });
-  const handleChangeText = (text) => {
-    setSearchQuery(text);
-  };
-
-  const handleSubmit = () => {
-    onSubmit(searchQuery);
-    setFoundIndex(0);
-  };
-
   return(
     <View style={styles.container}>
-      <Animated.View style={[styles.animView,animatedStyle]}>
-       <View style={{padding:15}}>
-       <TextInput cursorColor={'#6A54E9'}
+      <Animated.View style={[styles.animView,animatedStyle]}>   
+      <TouchableOpacity style={styles.searchBut} onPress={()=>{if (animation.value==1) 
+                                                                  {animation.value=0;
+                                                                    setValue(0);
+                                                                  } 
+                                                              else {animation.value=1
+                                                                setValue(1)
+                                                                }}}>
+        {value==1 ? <SearchIconOpen width={52}/>:<SearchIcon/>}
+      </TouchableOpacity>
+      <TextInput cursorColor={'#6A54E9'}
         style={styles.input}
         placeholder="Search..."
-        onChangeText={handleChangeText}
-        onSubmitEditing={handleSubmit}
+        onChangeText={handleSearchChange}
         value={searchQuery}
       />
-       </View>
-       
-      <TouchableOpacity style={styles.searchBut} onPress={()=>{if(animation.value==1) {animation.value=0} else {animation.value=1}}}>
-        <SearchIcon/>
-      </TouchableOpacity>
       </Animated.View>
     </View>
   );
@@ -44,29 +47,27 @@ const SearchComponent=({onSubmit, setFoundIndex})=>{
 export default SearchComponent;
 
 const styles = StyleSheet.create({
+  container:{
+    flex:1,
+    justifyContent:'center',
+    alignItems:'flex-end',
+  },
   animView:{
     height:50,
-    width:250,
+    backgroundColor:'#fff',
+    borderRadius:30,
     flexDirection:'row',
     alignItems:'center',
-    borderRadius:20,
-    backgroundColor:'#d8dfe5',
-  },
-  container:{
-    justifyContent:'center',
-    alignItems:'center'
+    justifyContent:'space-between',
   },
   input:{
-    width:150,
+    marginLeft:10,
+    width:'80%',
     height:40,
   },
   searchBut:{
-    // backgroundColor:'#000',
     position:'absolute',
-    //right:0,
-    alignItems:'center',
-    justifyContent:'center',
-    width:34,
-    height:32,
+    right:0,
   },
+
 })
